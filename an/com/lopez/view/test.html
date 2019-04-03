@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyHtml.html</title>	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+  </head>
+  <body>
+    asdasThis is my HTML 555page 5555. <br>
+  </body>
+  <script type="text/javascript">
+	var xhr=new XMLHttpRequest();
+	xhr.open('POST','/test',true);
+	xhr.responseType = "text"; 
+	xhr.onload=function(){
+		console.log(this.response);
+	}
+	xhr.send("age=19&sex=man");
+  </script>
+</html>
