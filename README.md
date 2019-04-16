@@ -26,3 +26,5 @@ keepAliveTime=
 workQueueSize=  
 使用Server中的getServer方法获取一个服务器，getServer参数为配置文件的地址   
 获取一个Server对象后，可以调用startServer启动服务器，   
+
+Server有关的类全在an.com.lopez.server中。
