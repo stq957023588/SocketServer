@@ -20,7 +20,7 @@ import javax.mail.internet.MimeUtility;
  
 public class LopezEmail {
 	private static final String defaultSenderName = "957023588@qq.com";// 默认的发件人用户名，defaultEntity用得到
-	private static final String defaultSenderPass = "oorlnkfimjidbeie";// 默认的发件人密码，defaultEntity用得到
+	private static final String defaultSenderPass = "";// 默认的发件人密码，defaultEntity用得到
 	private static final String defaultSmtpHost = "smtp.qq.com";// 默认的邮件服务器地址，defaultEntity用得到
  
 	private String smtpHost; // 邮件服务器地址
