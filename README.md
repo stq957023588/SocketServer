@@ -1,0 +1,28 @@
+使用Socket写的一个简单服务器  
+能通过地址访问静态资源，可以使用注解来设置后端地址，实现了AOP  
+被@CtrlClass所注解的类将会被扫描，在这类中所有有@CtrlMethod("")的方法将会被在服务器启动时存储，方法注解中的值是前端访问后端的地址，  
+@CtrlField只能注解HttpRequest类，被注解的属性，将会被注入一个HttpRequest对象。方法中可以使用该对象  
+使用Aop首先需要创建一个被@AopClass所注解的类，该类中被@AopFun("")所注解的方法将是Aop的方法，注解中的值是是调用Aop方法的标识，  
+在需要使用Aop时需要在方法上添加@AopBegin或者@AopEnd注解，注解中的值与@AopFun中的值所对应  
+当前Aop只能在被@CtrlMethod注解的方法上使用  
+	@CtrlMethod("/voidTest")  
+	@AopBegin("log")  
+	@AopEnd("log")  
+	public void  voidTest() {  
+	    System.out.println("voidTest");  
+	}  
+创建一个服务器首先需要一个配置文件properties（最好放在包中），  
+配置文件参数：  
+端口号
+port=9654  
+@CtrlClass注解的类的包名
+ctrlPackage=an.com.lopez.tools  
+@AopClass注解的类的包名
+aopPackage=an.com.lopez.tools  
+线程池参数
+threadPoolSize=30  
+threadPoolMaxSize=50  
+keepAliveTime=  
+workQueueSize=  
+使用Server中的getServer方法获取一个服务器，getServer参数为配置文件的地址   
+获取一个Server对象后，可以调用startServer启动服务器，   
