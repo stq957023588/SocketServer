@@ -14,6 +14,9 @@ public class CacheModel {
 	Class[] paramsType;
 	Object[] params;
 	
+	CacheModel begin;
+	CacheModel end;
+	
 	public CacheModel(String url,Object obj,Method method,Class<?> returnType,Class[] paramsType){
 		this.url=url;
 		this.obj=obj;
@@ -28,8 +31,12 @@ public class CacheModel {
 			for(int i=0;i<paramsType.length;i++)
 				if(paramsType[i]==Map.class)
 					params[i]=paramsMap;
-			
-			return method.invoke(obj, params);
+			if(begin!=null)
+				begin.invoke(null);
+			Object returnObj=method.invoke(obj, params);
+			if(end!=null)
+				end.invoke(null);
+			return returnObj;
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,4 +59,13 @@ public class CacheModel {
 			}
 		}
 	}
+
+	public void setBegin(CacheModel begin) {
+		this.begin = begin;
+	}
+
+	public void setEnd(CacheModel end) {
+		this.end = end;
+	}
+	
 }

@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 public class HtmlModel {
 	private String html;
 	private String htmlName;
@@ -21,19 +23,9 @@ public class HtmlModel {
 		return html;
 	}
 	private void setHtml() throws IOException{
-		File file=new File(Server.htmlMap.get(htmlName));
+		File file=new File(Server.context.resourcesPath+"\\html\\"+htmlName+".html");
 		InputStream inputStream=new FileInputStream(file);
-		byte[]	bytes=new byte[1024];
-		int len;
-		StringBuffer buffer=new StringBuffer();
-		while(true){
-			len=inputStream.read(bytes);
-			buffer.append(new String(bytes));
-			if(len==-1 || len<1024){
-				break;
-			}
-		}
-		this.html=buffer.toString();
+		this.html=IOUtils.toString(inputStream);
 	}
 	
 	

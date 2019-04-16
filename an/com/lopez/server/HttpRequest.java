@@ -94,10 +94,11 @@ public class HttpRequest extends Request{
 		return "";
 	}
 	public void printMsg() {
-		System.out.println("requestLine:\n"+requestLine);
-		System.out.println("requestHeader:\n"+requestHeader);
-		System.out.println("requestBody:\n"+requestBody);
+		System.out.println(requestLine);
+		System.out.println(requestHeader);
+		System.out.println(requestBody);
 	}
+	
 
 	public String getRequestLine() {
 		return requestLine;
@@ -130,6 +131,7 @@ public class HttpRequest extends Request{
 	public void setGotoURL(String gotoURL) {
 		this.gotoURL = gotoURL;
 	}
+
 	
 
 }

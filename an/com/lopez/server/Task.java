@@ -9,6 +9,9 @@ public abstract class Task implements Runnable{
 	InputStream in;
 	OutputStream out;
 	
+	Request request;
+	Response response;
+	
 	public Task(Socket socket){
 		this.socket=socket;
 	}
