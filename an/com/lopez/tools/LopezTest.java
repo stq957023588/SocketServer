@@ -489,8 +489,8 @@ public class LopezTest {
 		    
 		    System.out.println(nonceStr+"\t"+timestamp);
 			
-			String url1="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
-			url1=url1.replace("APPID","wxe0ac0fd89108d866").replace("APPSECRET","8bad0b3f71120a0a242a7d4b454e0aad");
+			String url1="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=";
+			url1=url1.replace("APPID","wxe0ac0fd89108d866").replace("APPSECRET","");
 			AccessToken=doGet(url1).get("access_token").toString();
 //			System.out.println(AccessToken);
 			
