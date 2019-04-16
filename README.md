@@ -13,13 +13,13 @@
 	}  
 创建一个服务器首先需要一个配置文件properties（最好放在包中），  
 配置文件参数：  
-端口号
+端口号  
 port=9654  
-@CtrlClass注解的类的包名
+@CtrlClass注解的类的包名  
 ctrlPackage=an.com.lopez.tools  
-@AopClass注解的类的包名
+@AopClass注解的类的包名  
 aopPackage=an.com.lopez.tools  
-线程池参数
+线程池参数  
 threadPoolSize=30  
 threadPoolMaxSize=50  
 keepAliveTime=  
