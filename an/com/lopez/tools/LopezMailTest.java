@@ -4,7 +4,7 @@ public class LopezMailTest {
 	
 	public static void main(String[] args) throws Exception{
 //		String userName = "957023588@qq.com"; // 发件人邮箱
-//		String password = "oorlnkfimjidbeie"; // 发件人密码
+//		String password = ""; // 发件人密码
 //		String smtpHost = "smtp.qq.com"; // 邮件服务器
  
 		String to = "SixteenChapter@163.com"; // 收件人，多个收件人以半角逗号分隔
