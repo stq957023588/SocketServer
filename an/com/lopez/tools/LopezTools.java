@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -20,6 +22,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class LopezTools {
+	
+	public static String getIpInfo(String ipStr) throws IOException{
+		URL url=new URL(" HTTP://api.ipstack.com/"+ipStr+"?access_key=d782d2822f2385b7f01b10c3a7d1134d&language=zh");
+		HttpURLConnection connection=(HttpURLConnection)url.openConnection();
+		connection.setRequestMethod("GET");
+		InputStream inputStream=connection.getInputStream();
+		String result=InputStreamRead(inputStream);
+		return result;
+	}
+	
 	public static Properties PropertiesTest() throws Exception{
 		Properties p=new Properties();
 		InputStream in=Thread.currentThread().getContextClassLoader().getResourceAsStream("an/com/lopez/config/config.properties");

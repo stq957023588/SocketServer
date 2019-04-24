@@ -1,4 +1,4 @@
-package an.com.lopez.tools;
+package an.com.lopez.server;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface CtrlClass {
-	
+public @interface FilterConfig {
+	int value() default 0;
 }

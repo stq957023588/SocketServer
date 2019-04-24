@@ -35,6 +35,18 @@ public class MyLinkedList<T> implements Iterable<T>{
 		theSize=0;
 		modCount++;
 	}
+	public boolean contains(T t){
+		Node<T> check=beginMarker.next;
+		while(true){
+			if(check==endMarker)
+				break;
+			if(check.data.equals(t))
+				return true;
+			check=check.next;
+		}
+		return false;
+	}
+	
 	public boolean add(T t){
 		add(size(),t);
 		return true;
@@ -64,7 +76,7 @@ public class MyLinkedList<T> implements Iterable<T>{
 	 */
 	private void addBefore(Node<T> p,T t){
 		Node<T> newNode=new Node<T>(t, p.prev, p);
-		p.prev.next=newNode;
+		newNode.prev.next=newNode;
 		p.prev=newNode;
 		theSize++;
 		modCount++;

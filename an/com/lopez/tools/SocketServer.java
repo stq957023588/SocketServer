@@ -15,6 +15,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import an.com.lopez.server.CtrlClass;
+import an.com.lopez.server.CtrlMethod;
+
 public class SocketServer {
 	public static Map<String, CacheModel> map=new HashMap<String, CacheModel>();
 	public static Map<String, String> htmlMap=new HashMap<String, String>();

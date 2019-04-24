@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.alibaba.fastjson.JSONObject;
 
 
 
@@ -25,7 +28,8 @@ public class Server {
 	private static final int WORK_QUEUE_SIZE=10;
 	private static final int PORT=8088;
 	
-	protected static Map<String, CacheModel> ctrlMap=new HashMap<String, CacheModel>();
+	protected Map<String, CacheModel> ctrlMap=new HashMap<String, CacheModel>();
+	protected Filter filter;
 	
 	private Map<String,CacheModel> aopMap=new HashMap<String, CacheModel>();
 	
@@ -140,7 +144,7 @@ public class Server {
 		
 		aopCache();
 		ctrlCache();
-		
+		filter();
 	}
 	
 	private void aopCache() throws Exception{
@@ -198,9 +202,111 @@ public class Server {
 			}					
 		}
 	}
+	private void filter(){
+		URL url=Thread.currentThread().getContextClassLoader().getResource("");
+		try {
+			listFile(new File(url.getPath()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	public void listFile(File file) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		String path=Thread.currentThread().getContextClassLoader().getResource("").getPath().replace("/", "\\").substring(1);
+		if(file.isDirectory()){
+			for(File f:file.listFiles()){
+				listFile(f);
+			}
+		}else{
+			String classStr=file.getAbsolutePath().replace(path, "");
+			if(classStr.endsWith(".class")){
+				Class<?> clazz=Thread.currentThread().getContextClassLoader().loadClass(classStr.substring(0,classStr.lastIndexOf(".")).replace("\\", "."));
+				if(Filter.class.isAssignableFrom(clazz) && clazz!=Filter.class){
+					Filter f=(Filter)clazz.newInstance();
+					if(filter==null){
+						filter=f;
+					}else{
+						if(filter.getClass().isAnnotationPresent(FilterConfig.class)){
+							if(f.getClass().isAnnotationPresent(FilterConfig.class)){
+								FilterConfig thisFc=filter.getClass().getAnnotation(FilterConfig.class);
+								FilterConfig Fc=f.getClass().getAnnotation(FilterConfig.class);
+								if(thisFc.value()>Fc.value()){
+									Filter temp=filter;
+									filter=f;
+									filter.setNext(temp);
+								}else{
+									filter.setNext(f);
+								}
+							}else{
+								Filter temp=filter;
+								filter=f;
+								filter.setNext(temp);
+							}
+						}else{
+							filter.setNext(f);
+						}
+					}
+				}
+			}
+		}
+	}
+	private class WebTask extends Task{
 
-	
+		public WebTask(Socket socket) throws IOException {
+			super(socket);
+			// TODO Auto-generated constructor stub
+			in = socket.getInputStream();
+			out= socket.getOutputStream();
+			request=new HttpRequest(in);
+			response=new HttpResponse(out);
+		}
+
+		@Override
+		public void execute() throws Exception {
+			// TODO Auto-generated method stub
+			if(filter==null){
+				doSomething();
+			}else{
+				filter.setRequest(request);
+				filter.setResponse(response);
+				if(filter.start()){
+					doSomething();
+				}
+			}
+			
+			out.close();
+			in.close();
+			socket.close();
+		}
+
+		private void doSomething() throws Exception{
+			String goToUrl=((HttpRequest) request).getGotoURL();
+			File file=null;
+			if(ctrlMap.containsKey(goToUrl)){
+				CacheModel cache=ctrlMap.get(goToUrl);
+				cache.setRequest(request);
+				Object obj=cache.invoke(request.getParams());
+				if(obj!=null){
+					if(obj.getClass() == String.class){
+						response.write(obj.toString());
+					}else if(obj.getClass()== HtmlModel.class){
+						response.write(((HtmlModel)obj).getHtml());
+					}else{
+						response.write(JSONObject.toJSONString(obj));
+					}
+				}else{
+					((HttpResponse)response).write();
+				}
+			}else if((file=new File(Server.context.resourcesPath+goToUrl)).exists() && (goToUrl!=null || "".equals(goToUrl.trim()))){
+				InputStream in=new FileInputStream(file);
+				((HttpResponse)response).write(in);
+			}else{
+				response.error404();
+			}
+			
+		}
+	}
 	
 
 	public String getCtrlPackage() {

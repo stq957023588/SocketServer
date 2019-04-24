@@ -17,7 +17,7 @@ public abstract class Response {
 	
 	public abstract String write(String str) throws IOException;
 	
-	protected String error404() throws IOException {
+	public String error404() throws IOException {
 		String message=STATE_404+"\n";
 		send(message);
 		return message;

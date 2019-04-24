@@ -1,8 +1,10 @@
 package an.com.lopez.tools;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,7 @@ import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +38,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
+
+import an.com.lopez.server.Filter;
+import an.com.lopez.server.FilterConfig;
 import an.com.lopez.server.Server;
 
 import com.alibaba.fastjson.JSON;
@@ -45,20 +52,112 @@ public class LopezTest {
 	private static String AccessToken;
 	private static String JsApiTicket;
 	public static Queue<String> queue=new ArrayBlockingQueue<String>(10);
+	public static Filter filter;
+	
 	private static int count;
 	
 	@MyAnnotations(MethodProxy.class)
 	public InvocationHandler handler;
-	
+	public void serverTest() throws IOException{
+		Server server=new Server();
+		server=Server.getServer("an/com/lopez/config/config.properties");
+		server.startServer();
+	}
 	public static void main(String[] args) throws Exception{
 		LopezTest ltLopezTest=new LopezTest();
 		ltLopezTest.serverTest();
+	}
+	
+	public void getPackage() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		URL url=Thread.currentThread().getContextClassLoader().getResource("");
+		listFile(new File(url.getPath()));
+	}
+	public void htmlCopy() throws IOException{
+		URL url=Thread.currentThread().getContextClassLoader().getResource("");
+		String path = new File(url.getFile()).getParent();
+		File file=new File(path+"\\resources\\html\\test.html");
+		InputStream inputStream=new FileInputStream(file);
+		String str=IOUtils.toString(inputStream);
+		System.out.println(str);
+	}
+	
+	public void resourcesFolder() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		URL url=Thread.currentThread().getContextClassLoader().getResource("");
+		String path = new File(url.getFile()).getParent();
+		listFile(new File(path+"\\resources"));
+	}
+	
+	public void listFile(File file) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		String path=Thread.currentThread().getContextClassLoader().getResource("").getPath().replace("/", "\\").substring(1);
+		if(file.isDirectory()){
+			for(File f:file.listFiles()){
+				listFile(f);
+			}
+		}else{
+			String classStr=file.getAbsolutePath().replace(path, "");
+			if(classStr.endsWith(".class")){
+				Class<?> clazz=Thread.currentThread().getContextClassLoader().loadClass(classStr.substring(0,classStr.lastIndexOf(".")).replace("\\", "."));
+				if(Filter.class.isAssignableFrom(clazz) && clazz!=Filter.class){
+					Filter f=(Filter)clazz.newInstance();
+					if(filter==null){
+						filter=f;
+					}else{
+						if(filter.getClass().isAnnotationPresent(FilterConfig.class)){
+							if(f.getClass().isAnnotationPresent(FilterConfig.class)){
+								FilterConfig thisFc=filter.getClass().getAnnotation(FilterConfig.class);
+								FilterConfig Fc=f.getClass().getAnnotation(FilterConfig.class);
+								if(thisFc.value()>Fc.value()){
+									Filter temp=filter;
+									filter=f;
+									filter.setNext(temp);
+								}else{
+									filter.setNext(f);
+								}
+							}else{
+								Filter temp=filter;
+								filter=f;
+								filter.setNext(temp);
+							}
+						}else{
+							filter.setNext(f);
+						}
+					}
+				}
+			}
+		}
+	}
+	public void setFilter(Filter f){
+		if(filter==null){
+			filter=f;
+		}else{
+			
+		}
+		System.out.println(f.getClass());
+	}
+	
+	public void Josephus(int M,int N){
+		
+		
 		
 	}
-	public void serverTest() throws IOException{
-		Server server=new Server("an.com.lopez.view", "an.com.lopez.tools");
-		server.startServer();
+	
+	public void queueTest(){
+		MyQueue<String> queue=new MyQueue<String>(5);
+		queue.enqueue("1");
+		queue.enqueue("2");
+		queue.enqueue("3");
+		queue.enqueue("4");
+		queue.enqueue("5");
+		System.out.println(queue.dequeue());
+		System.out.println(queue.dequeue());
+		System.out.println(queue.dequeue());
+		System.out.println(queue.dequeue());
+		queue.enqueue("6");
+		queue.enqueue("7");
+		System.out.println(queue.dequeue());
+		
 	}
+	
 	
 	public void PropertiesTest() throws Exception{
 		Properties p=new Properties();
@@ -265,17 +364,17 @@ public class LopezTest {
 	
 	
 	public void socketReptile() throws UnknownHostException, IOException {
-		Socket socket=new Socket("127.0.0.1",9000);
+		Socket socket=new Socket("47.95.164.112",80);
 		OutputStream outputStream=socket.getOutputStream();
 		StringBuffer sb=new StringBuffer();
 		sb.append("GET / HTTP/1.1 \r\n");
 		sb.append("HOST: 127.0.0.1\r\n");
-//		sb.append("Connection: close\r\n");
-//		sb.append("Upgrade-Insecure-Requests: 1\r\n");
-//		sb.append("User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36\r\n");
-//		sb.append("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n");
-//		sb.append("Accept-Encoding: gzip, deflate, sdch\r\n");
-//		sb.append("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6\r\n");
+		sb.append("Connection: close\r\n");
+		sb.append("Upgrade-Insecure-Requests: 1\r\n");
+		sb.append("User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36\r\n");
+		sb.append("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n");
+		sb.append("Accept-Encoding: gzip, deflate, sdch\r\n");
+		sb.append("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6\r\n");
 		sb.append("\n");
 		outputStream.write(sb.toString().getBytes("UTF-8"));
 		outputStream.flush();
@@ -307,12 +406,12 @@ public class LopezTest {
 	
 	public void urlTest() throws Exception {
 //		System.setProperty("https.protocols", "TLSv1.2,TLSv1.1,SSLv3");
-		URL url=new URL("https://vipreader.qidian.com/chapter/1010259609/394650420");
+		URL url=new URL("http://live2d.fghrsh.net/api/");
 		HttpURLConnection connection=(HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("GET");
 		InputStream inputStream=connection.getInputStream();
-		
-	    System.out.println(LopezTools.InputStreamRead(inputStream));
+		String result=LopezTools.InputStreamRead(inputStream);
+		System.out.println(result);
 	}
 	
 	
@@ -443,7 +542,6 @@ public class LopezTest {
 		String string="fewfsd5v5w5f";
 		Pattern pattern=Pattern.compile("^\\w{12}$");
 		Matcher matcher=pattern.matcher(string);
-		
 		System.out.println(matcher.find());
 	}
 	
@@ -481,7 +579,7 @@ public class LopezTest {
 	
 	public void wechatTest() {
 		try {
-		    Map<String, String> ret = new HashMap();
+		    Map<String, String> ret = new HashMap<String, String>();
 		    String nonceStr = createNonceStr();
 		    String timestamp = createTimestamp();
 		    String string1;

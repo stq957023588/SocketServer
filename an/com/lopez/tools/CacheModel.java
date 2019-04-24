@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import an.com.lopez.server.CtrlField;
+
 public class CacheModel {
 	String url;
 	Object obj;

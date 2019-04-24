@@ -1,5 +1,6 @@
 package an.com.lopez.tools;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 public class MyStack<T> {
@@ -15,6 +16,7 @@ public class MyStack<T> {
 	public void clear(){
 		doClear();
 	}
+	@SuppressWarnings("unchecked")
 	private void doClear(){
 		
 		theItems=(T[])new Object[theCapacity];

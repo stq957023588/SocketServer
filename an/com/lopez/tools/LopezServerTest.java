@@ -30,9 +30,7 @@ public class LopezServerTest {
 	
 	public void server1 () throws Exception{
 		Remote service=new MyRemoteImp();
-		if(LocateRegistry.getRegistry(1099)==null){
-			LocateRegistry.createRegistry(1099);
-		}
+		LocateRegistry.createRegistry(1099);
 		Naming.rebind("rmi://localhost:1099/RemoteHello", service);
 	}
 }

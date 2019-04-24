@@ -77,8 +77,8 @@ public class MyThread<T> implements Runnable {
 	
 	private void waitAndNotify() throws InterruptedException {
 		synchronized (LopezTest.queue) {
-			Thread.sleep(5000);
 			System.out.println("waiting..");
+			Thread.sleep(5000);
 			LopezTest.queue.wait();
 			System.out.println("wake..");
 		}
